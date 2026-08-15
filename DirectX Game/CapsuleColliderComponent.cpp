@@ -60,5 +60,4 @@ CapsuleColliderComponent::~CapsuleColliderComponent()
 }
 
 void CapsuleColliderComponent::perform(float /*deltaTime*/) {
-    // No per-frame behaviour
 }

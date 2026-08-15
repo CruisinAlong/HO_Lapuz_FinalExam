@@ -99,8 +99,7 @@ void Plane::update(float dt)
 	if (!m_cb) return;
 
     CBDataP cb = {};
-	// Use the GameObject world matrix so position/rotation/scale applied to the
-	// Plane instance are respected when rendering.
+
 	cb.world = getWorldMatrix();
 	cb.view = m_view;
 	cb.projection = m_projection;
@@ -108,7 +107,7 @@ void Plane::update(float dt)
 
     m_cb->update(GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext().get(), &cb);
     auto ctx = GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext().get();
-	// bind here is OK, but render resets bindings — ensure render rebinds as well
+
 	ctx->setConstantBuffer(m_vs, m_cb);
 	ctx->setConstantBuffer(m_ps, m_cb);
 }
@@ -126,28 +125,19 @@ void Plane::render()
         return;
     }
 
-	// Reset cached bindings to ensure plane-specific input layout and
-	// constant buffers are bound correctly (prevents render state bleed).
+
 	ctx->resetStateBindings();
 
-	// Debug: log render call and resource pointers
 	Matrix4x4 world = this->getWorldMatrix();
 	Vector3D tr = world.getTranslation();
 	LOG_DEBUG("Plane::render: world=(%.3f,%.3f,%.3f) vb=%p vs=%p ps=%p cb=%p instLayout=%p vs_inst=%p",
 		tr.m_x, tr.m_y, tr.m_z, (void*)m_vb, (void*)m_vs, (void*)m_ps, (void*)m_cb, (void*)s_plane_instancedLayout, (void*)s_plane_vs_instanced);
 
-	// Use the non-instanced VS variant for the non-instanced draw so the VS input signature matches the VB
 	ctx->setVertexShader(m_vs);
 	ctx->setPixelShader(m_ps);
 
-	// setVertexBuffer will also bind the correct per-vertex input layout stored on the VB.
 	ctx->setVertexBuffer(m_vb);
 
-	// Do NOT override the input layout with the instanced layout for a non-instanced draw.
-	// Overriding here causes the GPU to interpret per-vertex data as instance data and
-	// results in invisible/misplaced geometry when instanced-layout exists.
-
-    // Re-bind per-instance constant buffer after reset so the shader sees the correct world matrix.
 	if (m_cb) {
 		ctx->setConstantBuffer(m_vs, m_cb);
 		ctx->setConstantBuffer(m_ps, m_cb);
@@ -169,7 +159,6 @@ bool Plane::InitSharedResources(RenderSystem* rs)
 	if (s_plane_initialized) return true;
 	if (!rs) return false;
 
-	// Create a prototype plane and steal its vertex/shader resources
 	Plane proto;
 	if (!proto.create()) return false;
 
@@ -178,13 +167,11 @@ bool Plane::InitSharedResources(RenderSystem* rs)
 	s_plane_ps = proto.m_ps; proto.m_ps = nullptr;
 	if (proto.m_cb) { proto.m_cb->release(); delete proto.m_cb; proto.m_cb = nullptr; }
 
-	// Compile instanced vertex shader and create input layout
 	void* vs_blob_inst = nullptr; size_t vs_size_inst = 0;
 	if (rs->compileVertexShader(L"VertexShader.hlsl", "vsmain_instanced", &vs_blob_inst, &vs_size_inst)) {
 		D3D11_INPUT_ELEMENT_DESC layoutInst[] = {
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			// instance matrix rows -> TEXCOORD1..4
 			{ "TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0,  D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 			{ "TEXCOORD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 			{ "TEXCOORD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
@@ -255,10 +242,8 @@ void Plane::RenderInstanced(DeviceContext* ctx, UINT instanceCount)
 	else if (s_plane_vs) ctx->setVertexShader(s_plane_vs);
 	if (s_plane_ps) ctx->setPixelShader(s_plane_ps);
 	ctx->setVertexBuffer(s_plane_vb);
-	// If we have an instanced input layout, override the current layout so instance semantics are used
 	if (s_plane_instancedLayout) ctx->setInputLayout(s_plane_instancedLayout);
 
-	// Bind per-instance buffer to slot 1 and issue non-indexed instanced draw (6 vertices per plane)
 	ctx->setInstanceBuffer(s_plane_instanceBuffer->getBuffer(), s_plane_instanceBuffer->getStride());
 	ctx->drawInstanced(6, instanceCount, 0);
 	ctx->setInstanceBuffer(nullptr, 0);

@@ -39,7 +39,6 @@ ConstantBuffer::ConstantBuffer(RenderSystem* system, UINT size_buffer, const voi
         return;
     }
 
-    // register in global reference table
     ReferenceManager::acquire(m_buffer);
 
     m_size = alignedSize;
@@ -50,7 +49,6 @@ ConstantBuffer::~ConstantBuffer()
 {
     if (m_buffer)
     {
-        // decrement global refcount; only release COM object when count reaches zero
         if (ReferenceManager::release(m_buffer)) {
             m_buffer->Release();
         }
@@ -94,7 +92,6 @@ bool ConstantBuffer::load(void* buffer, UINT size_buffer)
     ID3D11Device* device = nullptr;
     if (m_system) device = m_system->getDevice();
     if (!device) {
-        // fallback to GraphicsEngine's render system
         GraphicsEngine* ge = GraphicsEngine::get();
         if (ge && ge->getRenderSystem()) device = ge->getRenderSystem()->getDevice();
     }
@@ -111,7 +108,6 @@ bool ConstantBuffer::load(void* buffer, UINT size_buffer)
     }
 
     m_size = alignedSize;
-    // register in global reference table
     ReferenceManager::acquire(m_buffer);
     LOG("ConstantBuffer::load succeeded m_buffer=%p", m_buffer);
     return true;

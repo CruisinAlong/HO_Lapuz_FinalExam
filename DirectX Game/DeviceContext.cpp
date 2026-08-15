@@ -160,20 +160,16 @@ void DeviceContext::setConstantBuffer(PixelShader* pixel_shader, ConstantBuffer*
 
 void DeviceContext::setTexture(VertexShader* vertex_shader, ID3D11ShaderResourceView* srv)
 {
-    // Allow explicit unbind when srv == nullptr
     if (srv == m_vsTextureSRV) return;
 
-    // Unbind or bind the resource on the device
     ID3D11ShaderResourceView* arr[1] = { srv };
     m_d3dContext->VSSetShaderResources(0, 1, arr);
 
-    // Update cache
     m_vsTextureSRV = srv;
 }
 
 void DeviceContext::setTexture(PixelShader* pixel_shader, ID3D11ShaderResourceView* srv)
 {
-    // Allow explicit unbind when srv == nullptr
     if (srv == m_psTextureSRV) return;
 
     ID3D11ShaderResourceView* arr[1] = { srv };
@@ -184,7 +180,6 @@ void DeviceContext::setTexture(PixelShader* pixel_shader, ID3D11ShaderResourceVi
 
 void DeviceContext::resetStateBindings()
 {
-    // Clear cached pointers
     m_boundVertexBuffer = nullptr;
     m_boundInputLayout = nullptr;
     m_boundVertexStride = 0;
@@ -193,7 +188,6 @@ void DeviceContext::resetStateBindings()
 	m_boundInstanceBuffer = nullptr;
 	m_boundInstanceStride = 0;
 
-    // Unbind actual shader resource slots so device and cache are in sync
     ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
     m_d3dContext->VSSetShaderResources(0, 1, nullSRV);
     m_d3dContext->PSSetShaderResources(0, 1, nullSRV);

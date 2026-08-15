@@ -13,7 +13,6 @@ IndexBuffer::IndexBuffer() : m_system(nullptr), m_size_index(0), m_size_list(0),
 IndexBuffer::IndexBuffer(RenderSystem* system, void* list_indices, UINT size_index, UINT size_list)
 	: m_system(system), m_size_index(0), m_size_list(0), m_buffer(nullptr), m_format(DXGI_FORMAT_UNKNOWN)
 {
-    // initialize from data and throw on failure
 	if (!load(list_indices, size_index, size_list)) {
 		char buf[256];
 		sprintf_s(buf, "IndexBuffer ctor: load failed (size_index=%u size_list=%u)", size_index, size_list);
@@ -67,7 +66,6 @@ bool IndexBuffer::load(void* list_indices, UINT size_index, UINT size_list)
 		return false;
 	}
 
-	// register created buffer in reference manager
 	ReferenceManager::acquire(m_buffer);
 
 	UINT toLog = (m_size_list < 3) ? m_size_list : 3;

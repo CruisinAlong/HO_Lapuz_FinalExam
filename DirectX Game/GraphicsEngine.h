@@ -25,7 +25,6 @@ private:
 
 public:
     static GraphicsEngine* getInstance();
-	// Controlled creation/release to manage initialization order and RAII
 	static void create();
 	static void destroy();
 
@@ -35,15 +34,12 @@ public:
 public:
 	static GraphicsEngine* get();
 
-	// Access to the underlying RenderSystem
 	RenderSystem* getRenderSystem();
-    // Access to the TextureManager
 	TextureManager* getTextureManager();
-	// Access to the MeshManager
 	MeshManager* getMeshManager();
 
 private:
-	RenderSystem* m_render = nullptr; // owned when initialized
+	RenderSystem* m_render = nullptr; 
     TextureManager* m_textureManager = nullptr;
 	MeshManager* m_meshManager = nullptr;
 };

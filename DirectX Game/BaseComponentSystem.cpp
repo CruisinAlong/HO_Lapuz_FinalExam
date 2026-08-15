@@ -36,27 +36,23 @@ void BaseComponentSystem::destroy() {
 }
 
 bool BaseComponentSystem::init() {
-    // ctor handled initialization; keep for parity with GraphicsEngine if needed
+
     return true;
 }
 
 bool BaseComponentSystem::release() {
-    // nothing special for now
     return true;
 }
 
 BaseComponentSystem::BaseComponentSystem() {
-    // Create and own a PhysicsSystem so PhysicsComponents can register and the world will step.
     physicsSystem = new PhysicsSystem();
 }
 
 BaseComponentSystem::~BaseComponentSystem() {
-    // Destroy physics system if present
     if (physicsSystem) {
         delete physicsSystem;
         physicsSystem = nullptr;
     }
-    // Note: AComponent lifetime is still owned by their GameObject owners
     m_components.clear();
 }
 

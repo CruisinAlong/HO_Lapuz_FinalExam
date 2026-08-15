@@ -15,7 +15,6 @@ VertexBuffer::VertexBuffer(RenderSystem* system) : m_system(system), m_layout(0)
 VertexBuffer::VertexBuffer(RenderSystem* system, void* list_vertices, UINT size_vertex, UINT size_list, void* shader_byte_code, UINT size_byte_shader)
     : m_system(system), m_layout(0), m_buffer(0)
 {
-    // Try to initialize; throw on failure to ensure strong RAII
     if (!load(list_vertices, size_vertex, size_list, shader_byte_code, size_byte_shader)) {
         char buf[256];
         sprintf_s(buf, "VertexBuffer ctor: load failed (size_vertex=%u size_list=%u)", size_vertex, size_list);
@@ -59,7 +58,6 @@ bool VertexBuffer::load(void* list_vertices, UINT size_vertex, UINT size_list, v
         return false;
     }
 
-    // register created buffer in reference manager
     ReferenceManager::acquire(m_buffer);
 
     UINT toLog = (size_list < 3) ? size_list : 3;
@@ -83,7 +81,6 @@ bool VertexBuffer::load(void* list_vertices, UINT size_vertex, UINT size_list, v
     hr = device->CreateInputLayout(&layout[0], size_layout, shader_byte_code, size_byte_shader, &m_layout);
     if(FAILED(hr)) {
         LOG("VertexBuffer::load CreateInputLayout failed HR=0x%08X", hr);
-        // if layout creation failed, release the buffer we created
         if (ReferenceManager::release(m_buffer)) m_buffer->Release();
         m_buffer = nullptr;
         return false;

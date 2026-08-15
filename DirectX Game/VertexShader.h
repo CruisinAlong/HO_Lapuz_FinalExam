@@ -14,7 +14,6 @@ public:
 private:
     bool init(const void* shader_byte_code, size_t byte_code_size);
 public:
-	// RAII constructor taking RenderSystem
 	VertexShader(RenderSystem* system);
 	VertexShader(RenderSystem* system, const void* shader_byte_code, size_t byte_code_size);
 private:

@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-class GameObject; // forward
+class GameObject; 
 
 class AComponent {
 public:

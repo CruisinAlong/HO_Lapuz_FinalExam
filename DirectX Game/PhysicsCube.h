@@ -8,10 +8,8 @@ public:
     PhysicsCube();
     virtual ~PhysicsCube();
 
-    // create as cube with physical properties
     bool create() override;
 
-    // enable/disable physics
     void setStatic(bool s) { m_static = s; }
 
     void setVelocity(const Vector3D& v) { m_velocity = v; }

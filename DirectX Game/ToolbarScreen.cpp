@@ -32,7 +32,6 @@ void ToolbarScreen::drawUI(float)
         if (ImGui::BeginMenu("About")) {
             if (ImGui::MenuItem("Credits")) {
                 if (m_app && m_app->getUIManager()) {
-                    // toggle credits window
                     m_app->getUIManager()->setShowCredits(!m_app->getUIManager()->isShowCredits());
                 }
             }
@@ -49,7 +48,6 @@ void ToolbarScreen::drawUI(float)
     ImGui::SameLine();
     if (ImGui::Button("Add Physics Cube")) {
         if (m_app) {
-            // spawn 20 physics cubes at the same location for collision testing
             for (int i = 0; i < 20; ++i) m_app->addPhysicsCube();
         }
     }
@@ -58,7 +56,6 @@ void ToolbarScreen::drawUI(float)
     ImGui::SameLine();
     if (ImGui::Button("Remove All Cubes")) { if (m_app) m_app->removeAllCubes(); }
     ImGui::SameLine();
-    // Play/Pause simulation toggle
     if (m_app) {
         const char* label = m_app->isSimulationRunning() ? "Pause" : "Play";
         if (ImGui::Button(label)) { m_app->setSimulationRunning(!m_app->isSimulationRunning()); }

@@ -7,7 +7,6 @@ class VertexBuffer
 {
 public:
 	VertexBuffer();
-	// RAII: construct with RenderSystem pointer and initialize
 	VertexBuffer(RenderSystem* system);
 	VertexBuffer(RenderSystem* system, void* list_vertices, UINT size_vertex, UINT size_list, void* shader_byte_code, UINT size_byte_shader);
 

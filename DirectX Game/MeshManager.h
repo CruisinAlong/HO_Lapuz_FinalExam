@@ -9,7 +9,6 @@ public:
     ~MeshManager();
 
     MeshPtr createMeshFromFile(const std::wstring& file_path);
-    // Create common procedural meshes (not cached by path)
     MeshPtr createCubeMesh();
     MeshPtr createPlaneMesh();
 

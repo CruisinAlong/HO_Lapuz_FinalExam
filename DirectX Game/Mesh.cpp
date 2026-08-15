@@ -15,21 +15,17 @@
 
 Mesh::Mesh(const std::wstring& full_path) : Resource(full_path)
 {
-    // Convert wide path to UTF-8 string
     std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
     std::string path = conv.to_bytes(full_path);
 
     std::vector<std::string> texnames;
     if (!loadObj(path, m_vertices, m_indices, texnames)) {
-        // failed to load
         return;
     }
 
-    // Create buffers via RenderSystem
     RenderSystem* rs = GraphicsEngine::getInstance()->getRenderSystem();
     if (!rs) return;
 
-    // Compile vertex shader for mesh layout and create VB
     void* vs_blob = nullptr; size_t vs_size = 0;
     if (!rs->compileVertexShader(L"VertexMeshLayout.hlsl", "vsmain", &vs_blob, &vs_size)) return;
 
@@ -41,7 +37,6 @@ Mesh::Mesh(const std::wstring& full_path) : Resource(full_path)
 
 }
 
-// Construct mesh from provided vertex/index arrays (procedural)
 Mesh::Mesh(const std::vector<VertexMesh>& verts, const std::vector<unsigned int>& indices)
     : Resource(L"<procedural>")
 {
@@ -51,7 +46,6 @@ Mesh::Mesh(const std::vector<VertexMesh>& verts, const std::vector<unsigned int>
     RenderSystem* rs = GraphicsEngine::getInstance()->getRenderSystem();
     if (!rs) return;
 
-    // Compile vertex shader for mesh layout and create VB
     void* vs_blob = nullptr; size_t vs_size = 0;
     if (!rs->compileVertexShader(L"VertexMeshLayout.hlsl", "vsmain", &vs_blob, &vs_size)) return;
 
@@ -134,7 +128,6 @@ bool Mesh::loadObj(const std::string& path, std::vector<VertexMesh>& outVertices
         }
     }
 
-    // collect diffuse texture names
     for (const auto& m : materials) {
         if (!m.diffuse_texname.empty()) outTexNames.push_back(m.diffuse_texname);
     }
@@ -175,17 +168,13 @@ void Mesh::RenderInstanced(DeviceContext* ctx, UINT instanceCount)
 {
     if (!ctx || !m_vb || !m_ib || instanceCount == 0 || !m_instanceBuffer) return;
 
-    // Bind vertex/index for the mesh (slot 0)
     ctx->setVertexBuffer(m_vb);
     ctx->setIndexBuffer(m_ib);
 
-    // Bind instance buffer to slot 1
     ctx->setInstanceBuffer(m_instanceBuffer->getBuffer(), m_instanceBuffer->getStride());
 
-    // Issue instanced draw
     UINT indexCount = m_ib->getSizeIndexList();
     ctx->drawIndexedInstanced(indexCount, instanceCount, 0, 0);
 
-    // Unbind instance buffer to keep cache consistent
     ctx->setInstanceBuffer(nullptr, 0);
 }

@@ -492,8 +492,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Deploy_Release.bat" />
-    <None Include="import_level.py" />
-    <None Include="run_import.py" />
+    <None Include="scan_libs_debug_crt.bat" />
   </ItemGroup>
 </Project>

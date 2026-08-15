@@ -68,7 +68,7 @@ PhysicsComponent* PhysicsSystem::findComponentByName(const String& name) {
 }
 
 PhysicsSystem::ComponentList PhysicsSystem::getAllComponents() const {
-    return componentList; // copy - caller can iterate safely
+    return componentList; 
 }
 
 void PhysicsSystem::updateAllComponents(float deltaTime) {
@@ -78,10 +78,8 @@ void PhysicsSystem::updateAllComponents(float deltaTime) {
 
     const float clampedDelta = std::max(deltaTime, 1e-6f);
 
-    // Call into physics world with safe, clamped timestep.
     physicsWorld->update(clampedDelta);
 
-    // Sync each registered component from the physics world back to the owner
     for (auto comp : componentList) {
         if (comp) comp->perform(clampedDelta);
     }

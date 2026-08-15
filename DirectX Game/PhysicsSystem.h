@@ -4,7 +4,6 @@
 #include <unordered_map>
 #include <vector>
 
-// Forward declarations for ReactPhysics3D types to avoid leaking RP3D headers into other TUs.
 namespace reactphysics3d {
     class PhysicsCommon;
     class PhysicsWorld;
@@ -27,10 +26,8 @@ public:
     PhysicsComponent* findComponentByName(const String& name);
     ComponentList getAllComponents() const;
 
-    // Step world and update components
     void updateAllComponents(float deltaTime);
 
-    // Accessors for RP3D objects (forward-declared types)
     reactphysics3d::PhysicsWorld* getPhysicsWorld();
     reactphysics3d::PhysicsCommon* getPhysicsCommon();
 

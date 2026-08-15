@@ -18,10 +18,8 @@ BoxColliderComponent::BoxColliderComponent(const std::string& name, const Vector
     PhysicsWorld* pw = phys->getPhysicsWorld();
     if (!pc || !pw) return;
 
-    // If owner already has a PhysicsComponent, attach collider to its rigid body
     if (getOwner()) {
         auto comp = dynamic_cast<PhysicsComponent*>(getOwner()->findComponentOfType(AComponent::Physics));
-        // If there's no PhysicsComponent yet, create one so we have a rigid body
         if (!comp) {
             comp = new PhysicsComponent("PhysicsAuto", 1.0f, getOwner());
             if (comp) getOwner()->attachComponent(comp);
@@ -38,7 +36,6 @@ BoxColliderComponent::BoxColliderComponent(const std::string& name, const Vector
 
 BoxColliderComponent::~BoxColliderComponent()
 {
-    // Remove collider and shape
     BaseComponentSystem* base = BaseComponentSystem::getInstance();
     if (!base) return;
     PhysicsSystem* phys = base->getPhysicsSystem();
@@ -61,5 +58,4 @@ BoxColliderComponent::~BoxColliderComponent()
 }
 
 void BoxColliderComponent::perform(float /*deltaTime*/) {
-    // Nothing to do per-frame for now
 }

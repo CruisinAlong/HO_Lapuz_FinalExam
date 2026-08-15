@@ -172,6 +172,5 @@ void Window::onDestroy()
 
 Window::~Window()
 {
-    // ensure native resources are released
 	release();
 }

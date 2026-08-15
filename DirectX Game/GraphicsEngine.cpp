@@ -11,9 +11,7 @@ GraphicsEngine::GraphicsEngine() : m_render(nullptr)
 {
     try {
         m_render = new RenderSystem();
-        // initialize shader library with the render system
         ShaderLibrary::initialize(m_render);
-        // create texture and mesh managers after render system is available
         m_textureManager = new TextureManager();
         m_meshManager = new MeshManager();
     }
@@ -25,12 +23,9 @@ GraphicsEngine::GraphicsEngine() : m_render(nullptr)
 
 GraphicsEngine::~GraphicsEngine()
 {
-    // ensure resources are freed
-    // shutdown internal systems
-    // delete texture and mesh managers before render system (they may depend on render system)
+
     if (m_textureManager) { delete m_textureManager; m_textureManager = nullptr; }
     if (m_meshManager) { delete m_meshManager; m_meshManager = nullptr; }
-    // destroy shader library before destroying render system
     ShaderLibrary::destroy();
     if (m_render) {
         delete m_render;
@@ -40,7 +35,7 @@ GraphicsEngine::~GraphicsEngine()
 
 bool GraphicsEngine::init()
 {
-    // legacy: nothing to do because ctor performs initialization
+
     return (m_render != nullptr);
 }
 

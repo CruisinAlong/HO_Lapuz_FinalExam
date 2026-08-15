@@ -14,7 +14,6 @@ public:
 
     Matrix4x4 getViewMatrix() const;
 
-    // Simple helpers used by AppWindow: move and rotate
     void move(const Vector3D& delta) { m_camera_pos = m_camera_pos + delta; }
     void rotate(float dx, float dy) { m_rot_y += dx; m_rot_x += dy; }
 

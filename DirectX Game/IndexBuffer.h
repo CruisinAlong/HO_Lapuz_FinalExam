@@ -8,9 +8,7 @@ class IndexBuffer
 {
 public:
 	IndexBuffer();
-    // RAII constructor: create index buffer from data, system may be nullptr
 	IndexBuffer(RenderSystem* system, void* list_indices, UINT size_index, UINT size_list);
-	// Construct with system only (deferred init)
 	IndexBuffer(RenderSystem* system);
 	bool load(void* list_indices, UINT size_index, UINT size_list);
 	UINT getSizeIndexList();

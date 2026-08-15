@@ -18,20 +18,15 @@ public:
 
     bool create();
 
-	// Allow overriding the shaders used by this instance (shaders owned by ShaderLibrary)
 	void setShaders(class VertexShader* vs, class PixelShader* ps);
     void setTexture(TexturePtr tex) { m_texture = tex; }
 	void setBuffers(class VertexBuffer* vb, class IndexBuffer* ib);
 
-	// Shared resource management (shaders, vb, ib)
 	static bool InitSharedResources(class RenderSystem* rs);
 	static void ReleaseSharedResources();
-	// Instancing helpers
 	static bool InitInstanceBuffer(class RenderSystem* rs, UINT maxInstances);
     static void ReleaseInstanceBuffer();
-    // Update the instance buffer with tightly packed Matrix4x4 world matrices (count <= maxInstances)
     static bool UpdateInstanceBuffer(ID3D11DeviceContext* d3dContext, const Matrix4x4* matrices, UINT count);
-    // Render using currently bound vertex/index/shader state with instancing
     static void RenderInstanced(ID3D11DeviceContext* d3dContext, UINT instanceCount);
 
 	void update(float dt) override;
@@ -52,7 +47,6 @@ private:
     bool m_externalBuffers = false;
 	TexturePtr m_texture;
 
-	// static shared resources
 	static VertexBuffer* s_vb;
 	static IndexBuffer* s_ib;
 	static VertexShader* s_vs;

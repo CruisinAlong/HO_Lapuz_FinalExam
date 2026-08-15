@@ -2,7 +2,7 @@
 #include "AComponent.h"
 #include "GameObject.h"
 #include "Mesh.h"
-#include "Prerequisites.h" // for TexturePtr
+#include "Prerequisites.h" 
 #include <string>
 #include <string>
 class Mesh;

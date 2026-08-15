@@ -19,7 +19,6 @@ static void DebugLog(const char* format, ...)
     LOG_INFO("%s", buf);
 }
 
-// Helper to log per-entity transform and world matrix for diagnostics
 static void LogEntityTransform(const char* phase, int index, GameObject* obj, const ObjectInstance& inst)
 {
 	if (!obj) return;
@@ -291,7 +290,6 @@ int AppWindow::addSphere(float radius)
 
 void AppWindow::removeAllCubes()
 {
-    // Schedule removal to avoid deleting while UI may be iterating m_cubes
 	m_pending_remove_all = true;
 	m_pending_removals.clear();
 }
@@ -587,7 +585,7 @@ void AppWindow::onUpdate()
 
     auto now = std::chrono::steady_clock::now();
     std::chrono::duration<double> diff = now - m_prev_time;
-    m_delta_time = static_cast<float>(diff.count()); // seconds
+    m_delta_time = static_cast<float>(diff.count()); 
     m_prev_time = now;
 
     GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext().get()->clearRenderTargetColor(
@@ -599,7 +597,6 @@ void AppWindow::onUpdate()
 
 	updateScene();
 	
-    // Build batches: per-Mesh/texture batches, and per-primitive-type batches for primitives without MeshComponent
     using BatchKey = std::pair<Mesh*, ID3D11ShaderResourceView*>;
     struct BatchKeyHash {
         std::size_t operator()(BatchKey const& k) const noexcept {
@@ -637,7 +634,6 @@ void AppWindow::onUpdate()
         if (!inst.object) continue;
         if (!inst.visible) continue;
 
-        // Primitive-specific instancing
         if (dynamic_cast<Sphere*>(inst.object)) {
             sphereMatrices.push_back(buildWorldMatrix(inst.position, inst.rotation, inst.scale));
             continue;
@@ -651,7 +647,6 @@ void AppWindow::onUpdate()
             continue;
         }
 
-        // MeshComponent-based batching for other objects
         AComponent* mcComp = inst.object->findComponentOfType(AComponent::MeshComp);
         MeshComponent* mc = mcComp ? dynamic_cast<MeshComponent*>(mcComp) : nullptr;
         if (mc && mc->getMesh()) {
@@ -663,22 +658,18 @@ void AppWindow::onUpdate()
         }
     }
 
-    // Get rendering contexts
     RenderSystem* rs2 = GraphicsEngine::getInstance()->getRenderSystem();
     DeviceContext* ctxWrap = rs2 ? rs2->getImmediateDeviceContext().get() : nullptr;
     ID3D11DeviceContext* d3dCtx = rs2 ? rs2->getContext() : nullptr;
     ShaderLibrary* lib = ShaderLibrary::getInstance();
 
-    // Draw sphere batch
     if (!sphereMatrices.empty() && ctxWrap && d3dCtx) {
         Sphere::InitInstanceBuffer(rs2, 10000);
         if (Sphere::UpdateInstanceBuffer(d3dCtx, sphereMatrices.data(), static_cast<UINT>(sphereMatrices.size()))) {
-            // bind sphere shared shaders inside RenderInstanced
             Sphere::RenderInstanced(ctxWrap, static_cast<UINT>(sphereMatrices.size()));
         }
     }
 
-    // Draw capsule batch
     if (!capsuleMatrices.empty() && ctxWrap && d3dCtx) {
         Capsule::InitInstanceBuffer(rs2, 10000);
         if (Capsule::UpdateInstanceBuffer(d3dCtx, capsuleMatrices.data(), static_cast<UINT>(capsuleMatrices.size()))) {
@@ -686,7 +677,6 @@ void AppWindow::onUpdate()
         }
     }
 
-    // Draw plane batch
     if (!planeMatrices.empty() && ctxWrap && d3dCtx) {
         Plane::InitInstanceBuffer(rs2, 10000);
         if (Plane::UpdateInstanceBuffer(d3dCtx, planeMatrices.data(), static_cast<UINT>(planeMatrices.size()))) {
@@ -694,13 +684,11 @@ void AppWindow::onUpdate()
         }
     }
 
-    // Draw mesh-based batches
     for (auto& kv : meshBatches) {
         Mesh* mesh = kv.first.first;
         ID3D11ShaderResourceView* srv = kv.first.second;
         auto& mats = kv.second;
         if (!mesh || mats.empty()) continue;
-        // ensure per-mesh instance buffer
         if (!mesh->getVertexBuffer() || !mesh->getIndexBuffer()) continue;
         mesh->InitInstanceBuffer(rs2, 10000);
         if (mesh->UpdateInstanceBuffer(d3dCtx, mats.data(), static_cast<UINT>(mats.size()))) {
@@ -714,7 +702,6 @@ void AppWindow::onUpdate()
         }
     }
 
-    // Render non-batched objects individually
     for (auto pInst : nonBatchedObjects) {
         ObjectInstance& inst = *pInst;
         if (!inst.object) continue;
@@ -828,16 +815,13 @@ void AppWindow::onRightMouseUp(const Point& delta_mouse_pos)
 
 void AppWindow::onMouseMove(const Point& delta_mouse_pos)
 {
-	// Rotate camera while left mouse button is held
 	if (!m_left_button_down) return;
 
-	const float sensitivity = 0.005f; // adjust as needed
-	// Apply raw mouse delta (non-inverted)
-	m_rotation_y += delta_mouse_pos.m_x * sensitivity; // yaw
-	m_rotation_x += delta_mouse_pos.m_y * sensitivity; // pitch
+	const float sensitivity = 0.005f; 
+	m_rotation_y += delta_mouse_pos.m_x * sensitivity; 
+	m_rotation_x += delta_mouse_pos.m_y * sensitivity; 
 
-	// Clamp pitch to avoid gimbal flip (~ +/- 89 degrees)
-	const float maxPitch = 1.4f; // ~80 degrees
+	const float maxPitch = 1.4f; 
 	if (m_rotation_x > maxPitch) m_rotation_x = maxPitch;
 	if (m_rotation_x < -maxPitch) m_rotation_x = -maxPitch;
 }
@@ -852,7 +836,6 @@ int AppWindow::addPhysicsPlane()
 
 void AppWindow::setSimulationRunning(bool r)
 {
-    // Starting simulation: capture current editor-state transforms
     if (r && !m_simulation_running) {
 		m_old_delta = ::GetTickCount64();
         m_pre_sim_states.clear();
@@ -895,7 +878,6 @@ void AppWindow::setSimulationRunning(bool r)
                     if (!c) continue;
                     PhysicsComponent* pc = dynamic_cast<PhysicsComponent*>(c);
                     if (pc && pc->getRigidBody()) {
-                        // move the rigid body to owner transform and zero velocities
                         pc->syncOwnerToBody();
                         reactphysics3d::Vector3 zero(0.0f, 0.0f, 0.0f);
                         pc->getRigidBody()->setLinearVelocity(zero);
@@ -910,7 +892,6 @@ void AppWindow::setSimulationRunning(bool r)
         return;
     }
 
-    // Otherwise, simple state set
     m_simulation_running = r;
 }
 

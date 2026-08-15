@@ -47,7 +47,6 @@ bool PixelShader::init(const void* shader_byte_code, size_t byte_code_size)
     if (!SUCCEEDED(device->CreatePixelShader(
             shader_byte_code, byte_code_size, nullptr, &m_ps)))
         return false;
-    // register pixel shader in reference manager
     ReferenceManager::acquire(m_ps);
     return true;
 }

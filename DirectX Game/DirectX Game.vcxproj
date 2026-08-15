@@ -123,12 +123,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)ImGui;$(SolutionDir)DirectX Game\Libs\reactphysics3d\install\include;$(SolutionDir)DirectX Game\Libs\reactphysics3d\include;$(SolutionDir)DirectX Game\Libs\DirectXTex\include;$(SolutionDir)DirectX Game\Libs\DirectXTK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ImGui;$(SolutionDir)DirectX Game\Libs\reactphysics3d\install\include;$(SolutionDir)DirectX Game\Libs\reactphysics3d\Release\include;$(SolutionDir)DirectX Game\Libs\DirectXTex\include;$(SolutionDir)DirectX Game\Libs\DirectXTK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)DirectX Game\Libs\DirectXTK\bin;$(SolutionDir)DirectX Game\Libs\reactphysics3d\Release\lib;$(SolutionDir)DirectX Game\Libs\reactphysics3d\build_release\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)DirectX Game\Libs\DirectXTK\bin;$(SolutionDir)DirectX Game\Libs\reactphysics3d\Release\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>reactphysics3d.lib;d3d11.lib;d3dcompiler.lib;DirectXTex.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -315,9 +315,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Deploy_Release.bat" />
-    <None Include="import_level.py" />
-    <None Include="run_import.py" />
+    <None Include="scan_libs_debug_crt.bat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

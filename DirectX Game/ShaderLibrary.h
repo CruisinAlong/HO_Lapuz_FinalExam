@@ -15,7 +15,6 @@ public:
     static void initialize(RenderSystem* rs);
     static void destroy();
 
-    // Request a compiled shader bytecode buffer. Caller must delete[] the returned buffer.
     void requestVertexShaderData(const String& filename, void** shaderByteCode, size_t* sizeShader);
     void requestPixelShaderData(const String& filename, void** shaderByteCode, size_t* sizeShader);
 

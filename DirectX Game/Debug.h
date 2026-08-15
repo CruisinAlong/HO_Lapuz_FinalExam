@@ -3,10 +3,8 @@
 #include <cstdio>
 #include <cstdarg>
 
-// Simple logging macros. LOG_INFO/LOG_ERROR always emit. LOG_DEBUG compiles out in NDEBUG builds.
 
 #ifdef NDEBUG
-    // Release build: disable debug logs
     #define LOG_DEBUG(...) ((void)0)
 #else
     inline void LOG_DEBUG(const char* fmt, ...) {
@@ -40,5 +38,4 @@ inline void LOG_ERROR(const char* fmt, ...) {
     OutputDebugStringA("\n");
 }
 
-// Backwards compatible alias
 #define LOG LOG_INFO

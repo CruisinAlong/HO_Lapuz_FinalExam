@@ -38,7 +38,6 @@ public:
 
 	UIManager* getUIManager() { return m_ui_manager; }
 
-	// Entity management for UI
 	int addCube();
     int addTexturedCube();
     int addMeshInstance();
@@ -56,11 +55,10 @@ public:
     struct ObjectInstance* getEntity(size_t index);
 	void removeEntity(size_t index);
 
-	// --- Request-based spawn API (UI should call these, not direct add*)
 	void requestAddCube();
 	void requestAddTexturedCube();
 	void requestAddMeshInstance();
-	void requestAddPhysicsCube(int count = 1); // supports batch spawn requests
+	void requestAddPhysicsCube(int count = 1); 
 	void requestAddPhysicsPlane();
 	void requestAddCapsule(float height = 2.0f);
 	void requestAddSphere(float radius = 0.5f);
@@ -93,8 +91,6 @@ private:
     SwapChainPtr m_swap_chain;
     std::vector<ObjectInstance> m_cubes;
 	Sphere* m_sphere;
-    // resource holder removed; using shared Cube resources
-	//Cube* m_resource_cube = nullptr;
 
 
 private:
@@ -120,7 +116,6 @@ private:
 	float m_rot_vel_x;
 	float m_rot_vel_y;
 
-	// Positive = forward, negative = backward, 0 = stop
 	float m_forward = 0.0f;
 
 	float m_rightward = 0.0f;
@@ -132,12 +127,10 @@ private:
 
 	UIManager* m_ui_manager = nullptr;
 	bool m_imgui_initialized = false;
-    // Pending removals scheduled from UI callbacks to avoid modifying m_cubes while iterating
 	std::vector<size_t> m_pending_removals;
 	bool m_pending_remove_all = false;
 	void processPendingRemovals();
 
-    // Spawn request API: processed inside updateScene().
     struct SpawnRequest {
         enum Type {
             AddCube,
@@ -147,23 +140,22 @@ private:
             AddPhysicsPlane,
             AddCapsule
         } type;
-        int count;          // used for physics cube batch
-        float capsuleHeight; // used for capsule
+        int count;          
+        float capsuleHeight; 
     };
     std::vector<SpawnRequest> m_pending_spawns;
     void processPendingSpawns();
 
-    // Optional loaded texture for demo
 	TexturePtr m_box_texture;
     MeshPtr m_teapot;
     MeshPtr m_bunny;
 	MeshPtr m_armadillo;
-    // Procedural primitive meshes
+
 	MeshPtr m_cube_mesh;
 	MeshPtr m_plane_mesh;
-    // Scene builder helper (creates prefabs / attaches components)
+
 	SceneBuilder* m_scene_builder = nullptr;
-    // Simulation running flag (play/pause) - start paused by default
+
 	bool m_simulation_running = false;
 
 public:
@@ -171,7 +163,6 @@ public:
 	bool isSimulationRunning() const { return m_simulation_running; }
 
 private:
-	// Saved transforms captured when starting simulation; used to restore on pause.
 	struct PreSimState {
 		Vector3D position;
 		Vector3D rotation;

@@ -5,9 +5,7 @@
 class ReferenceManager
 {
 public:
-    // increment reference count for pointer
     static void acquire(void* ptr);
-    // decrement reference count for pointer; return true if count reached zero
     static bool release(void* ptr);
 private:
     static std::unordered_map<void*, int> s_map;

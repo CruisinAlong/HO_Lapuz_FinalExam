@@ -3,7 +3,6 @@
 #include <d3d11.h>
 #include <memory>
 
-// Forward declarations
 class RenderSystem;
 class DeviceContext;
 class SwapChain;

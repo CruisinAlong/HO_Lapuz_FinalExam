@@ -30,7 +30,6 @@ private:
 	Matrix4x4 m_projection;
 	float m_time;
 public:
-	// Instancing & shared resource helpers
     static bool InitSharedResources(class RenderSystem* rs);
 	static void ReleaseSharedResources();
 	static bool InitInstanceBuffer(class RenderSystem* rs, unsigned int maxInstances);

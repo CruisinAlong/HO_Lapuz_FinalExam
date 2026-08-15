@@ -51,9 +51,7 @@ bool SceneSerializer::saveInstances(const std::wstring& filename, const std::vec
 
 bool SceneSerializer::loadInstances(const std::wstring& filename, std::vector<ObjectInstance>& outInstances, SceneBuilder* builder)
 {
-    // If outInstances already contains objects, safely destroy them first.
     if (!outInstances.empty()) {
-        // Try to unbind any D3D state so device/context won't hold references to resources we're about to release.
         if (GraphicsEngine::getInstance()) {
             auto rs = GraphicsEngine::getInstance()->getRenderSystem();
             if (rs) {
@@ -77,8 +75,6 @@ bool SceneSerializer::loadInstances(const std::wstring& filename, std::vector<Ob
     std::vector<SceneEditor::SerializedObject> list;
     if (!SceneEditor::loadLevel(filename, list)) return false;
 
-    // Use provided builder (from AppWindow) when possible to keep creation consistent;
-    // otherwise create a local one.
     SceneBuilder localBuilder;
     SceneBuilder* usedBuilder = builder ? builder : &localBuilder;
 
@@ -103,13 +99,11 @@ bool SceneSerializer::loadInstances(const std::wstring& filename, std::vector<Ob
         } else if (so.type == "PhysicsCube") {
             inst = usedBuilder->createPhysicsCube(1.0f, so.position, so.rotation, so.scale, TexturePtr());
         } else {
-            // default to cube
             inst = usedBuilder->createCube(so.position, so.rotation, so.scale, TexturePtr());
         }
 
         if (!inst.object) continue;
 
-        // Apply component records
         for (const auto& cr : so.components) {
             if (cr.type == "Physics") {
                 float mass = 0.0f;

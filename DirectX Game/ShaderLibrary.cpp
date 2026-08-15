@@ -46,7 +46,6 @@ void ShaderLibrary::requestVertexShaderData(const String& filename, void** shade
     if (!blob || sz == 0) { m_rs->releaseCompiledShader(); *shaderByteCode = nullptr; *sizeShader = 0; return; }
     unsigned char* copy = new unsigned char[sz];
     memcpy(copy, blob, sz);
-    // release internal blob stored in RenderSystem
     m_rs->releaseCompiledShader();
     *shaderByteCode = copy;
     *sizeShader = sz;

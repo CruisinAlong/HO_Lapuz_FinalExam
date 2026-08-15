@@ -46,7 +46,6 @@ RenderSystem::RenderSystem()
     if (m_dxgiDevice) m_dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&m_dxgiAdapter);
     if (m_dxgiAdapter) m_dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&m_dxgiFactory);
 
-    // Wrap DeviceContext in a shared_ptr with a deleter that calls release()
     m_imm_device_context = DeviceContextPtr(new DeviceContext(m_imm_context), [](DeviceContext* p) { if (p) { p->release(); delete p; } });
 
     D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
@@ -58,7 +57,6 @@ RenderSystem::RenderSystem()
     res = m_d3dDevice->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
     if (FAILED(res))
     {
-        // clean up what we created so far
         if (m_imm_device_context) { m_imm_device_context.reset(); }
         if (m_dxgiFactory) { m_dxgiFactory->Release(); m_dxgiFactory = nullptr; }
         if (m_dxgiAdapter) { m_dxgiAdapter->Release(); m_dxgiAdapter = nullptr; }
@@ -85,7 +83,6 @@ RenderSystem::~RenderSystem()
 
     if (m_imm_device_context)
     {
-        // Reset will invoke deleter which calls release() and deletes the object
         m_imm_device_context.reset();
     }
     if (m_dxgiFactory) { m_dxgiFactory->Release(); m_dxgiFactory = nullptr; }
@@ -106,8 +103,8 @@ SwapChain* RenderSystem::createSwapChain(HWND hwnd, UINT width, UINT height)
     if (!sc->init(hwnd, width, height)) {
         delete sc;
         char buf[256];
-        sprintf_s(buf, "RenderSystem: SwapChain init failed for hwnd=%p (%u x %u)", hwnd, width, height); // fix width/height
-        throw std::runtime_error(buf); // prefer std::exception-derived type
+        sprintf_s(buf, "RenderSystem: SwapChain init failed for hwnd=%p (%u x %u)", hwnd, width, height); 
+        throw std::runtime_error(buf); 
     }
     return sc;
 }
@@ -115,16 +112,13 @@ SwapChain* RenderSystem::createSwapChain(HWND hwnd, UINT width, UINT height)
 
 SwapChainPtr RenderSystem::createSwapChainPtr()
 {
-    // create raw object and wrap it with a deleter that calls release()
     SwapChain* raw = createSwapChain();
     return SwapChainPtr(raw, [](SwapChain* p) { if (p) { p->release(); delete p; } });
 }
 
 SwapChainPtr RenderSystem::createSwapChainPtr(HWND hwnd, UINT width, UINT height)
 {
-    // create and initialize; if init fails, createSwapChain will throw
     SwapChain* raw = nullptr;
-    // Use the existing path so error handling remains consistent
     raw = createSwapChain(hwnd, width, height);
     return SwapChainPtr(raw, [](SwapChain* p) { if (p) { p->release(); delete p; } });
 }
@@ -189,9 +183,7 @@ VertexBuffer* RenderSystem::createVertexBuffer()
 
 VertexBuffer* RenderSystem::createVertexBuffer(void* list_vertices, UINT size_vertex, UINT size_list, void* shader_byte_code, UINT size_byte_shader)
 {
-    // Use constructor that binds this RenderSystem and initializes
     VertexBuffer* vb = new VertexBuffer(this, list_vertices, size_vertex, size_list, shader_byte_code, size_byte_shader);
-    // If constructor didn't create buffer, detect and throw
     if (vb->getSizeVertexList() == 0) { 
         delete vb; 
         char buf[256]; 
@@ -203,7 +195,6 @@ VertexBuffer* RenderSystem::createVertexBuffer(void* list_vertices, UINT size_ve
 
 ConstantBuffer* RenderSystem::createConstantBuffer(const void* initial_data, UINT size)
 {
-    // Use RAII constructor bound to this system
     ConstantBuffer* cb = new ConstantBuffer(this, size, initial_data);
     if (!cb->isValid()) {
         delete cb;
@@ -216,7 +207,6 @@ ConstantBuffer* RenderSystem::createConstantBuffer(const void* initial_data, UIN
 
 ConstantBuffer* RenderSystem::createConstantBuffer(RenderSystem* system, const void* initial_data, UINT size)
 {
-    // forward to member implementation
     return createConstantBuffer(initial_data, size);
 }
 

@@ -4,16 +4,14 @@
 #include "ImGui/imgui.h"
 
 InputSystem* InputSystem::sharedInstance = nullptr;
-// constructor performs initialization (RAII)
 InputSystem::InputSystem() noexcept
 {
-	// nothing to initialize right now
+
 }
 
 
 InputSystem::~InputSystem() noexcept
 {
-	// cleanup listeners
 	m_map_listeners.clear();
 }
 
@@ -27,9 +25,7 @@ void InputSystem::update()
 		m_first_time = false;
 	}
 
-	// If ImGui is present and wants to capture the mouse, suppress delivering
-	// mouse movement and button events to the application so UI interactions
-	// don't move the camera or recenter the cursor.
+
 	bool imgui_wants_mouse = false;
 	if (ImGui::GetCurrentContext()) {
 		imgui_wants_mouse = ImGui::GetIO().WantCaptureMouse != 0;
@@ -46,7 +42,6 @@ void InputSystem::update()
 			}
 		}
 	} else {
-		// Keep internal old mouse position in sync to avoid jumps when leaving UI
 		m_old_mouse_pos = Point(current_mouse_pos.x, current_mouse_pos.y);
 	}
 
@@ -87,7 +82,6 @@ void InputSystem::update()
 	m_right_button_down = rightDownNow;
 
 
-    // If ImGui wants the mouse, do not recenter the cursor even if the app has capture.
 	if (imgui_wants_mouse) {
 		m_old_mouse_pos = Point(current_mouse_pos.x, current_mouse_pos.y);
 	} else {
@@ -102,7 +96,6 @@ void InputSystem::update()
 				center.y = (clientRect.top + clientRect.bottom) / 2;
 				::ClientToScreen(capWnd, &center);
 
-				// If a forced cursor position is set, reapply it. Otherwise center the cursor.
 				if (m_has_forced_cursor) {
 					::SetCursorPos(m_forced_cursor_pos.m_x, m_forced_cursor_pos.m_y);
 					m_old_mouse_pos = m_forced_cursor_pos;

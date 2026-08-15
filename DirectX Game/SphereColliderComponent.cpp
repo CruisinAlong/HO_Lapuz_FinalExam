@@ -19,7 +19,6 @@ SphereColliderComponent::SphereColliderComponent(const std::string& name, float 
     PhysicsWorld* pw = phys->getPhysicsWorld();
     if (!pc || !pw) return;
 
-    // Ensure owner has a PhysicsComponent (rigid body)
     if (getOwner()) {
         PhysicsComponent* comp = dynamic_cast<PhysicsComponent*>(getOwner()->findComponentOfType(AComponent::Physics));
         if (!comp) {
@@ -27,7 +26,6 @@ SphereColliderComponent::SphereColliderComponent(const std::string& name, float 
             if (comp) getOwner()->attachComponent(comp);
         }
         if (comp && comp->getRigidBody()) {
-            // Adjust radius based on owner's scale (use average X/Z)
             Vector3D sc = getOwner()->getScale();
             float scaledRadius = m_radius * ((sc.m_x + sc.m_z) * 0.5f);
             m_sphereShape = pc->createSphereShape(scaledRadius);
@@ -62,5 +60,4 @@ SphereColliderComponent::~SphereColliderComponent()
 }
 
 void SphereColliderComponent::perform(float /*deltaTime*/) {
-    // No per-frame behaviour
 }

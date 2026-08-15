@@ -41,16 +41,13 @@ void InspectorScreen::drawUI(float)
     }
 
     ImGui::Text("Transform");
-    // Display live owner position (reflects physics updates). When edited, apply to both
-    // the stored instance and the GameObject so visuals and physics stay in sync.
     Vector3D livePos = ent->object->getPosition();
     float pos[3] = { livePos.m_x, livePos.m_y, livePos.m_z };
     if (ImGui::InputFloat3("Position", pos)) {
         ent->position.m_x = pos[0]; ent->position.m_y = pos[1]; ent->position.m_z = pos[2];
-        // Apply to the actual object immediately so visuals update.
+
         ent->object->setPosition(ent->position);
-        // If a physics component is attached, move the rigid body to the owner transform
-        // to ensure the physics world matches the edited transform.
+
         auto comps = ent->object->getComponentsOfType(AComponent::Physics);
         for (auto c : comps) {
             if (!c) continue;
@@ -64,7 +61,6 @@ void InspectorScreen::drawUI(float)
         }
     }
 
-    // Rotation / Scale are stored per CubeInstance
     float rot[3] = { ent->rotation.m_x, ent->rotation.m_y, ent->rotation.m_z };
     if (ImGui::InputFloat3("Rotation", rot)) {
         ent->rotation.m_x = rot[0]; ent->rotation.m_y = rot[1]; ent->rotation.m_z = rot[2];
@@ -76,7 +72,6 @@ void InspectorScreen::drawUI(float)
         if (ent->object) ent->object->setScale(ent->scale);
     }
 
-    // Show attached components
     ImGui::Separator();
     ImGui::Text("Components:");
     if (ent->object) {
@@ -84,26 +79,20 @@ void InspectorScreen::drawUI(float)
         if (comps.empty()) {
             ImGui::Text("(none)");
         } else {
-            // Iterate copy to allow deletion inside loop safely by breaking after change
             for (auto c : comps) {
                 if (!c) continue;
                 std::string name = c->getName();
                 ImGui::Bullet(); ImGui::Text("%s", name.c_str());
 
-                // Per-component remove button (unique label using pointer value)
                 std::string removeLabel = std::string("Remove##") + std::to_string(reinterpret_cast<uintptr_t>(c));
                 ImGui::SameLine();
                 if (ImGui::SmallButton(removeLabel.c_str())) {
-                    // Detach from owner and delete component (component destructor should clean up)
                     ent->object->detachComponent(c);
                     delete c;
-                    // break out — UI state changed; next frame will reflect updated components
                     break;
                 }
 
-                // show type-specific details
                 if (c->getType() == AComponent::MeshComp) {
-                    // MeshComponent
                     MeshComponent* mc = dynamic_cast<MeshComponent*>(c);
                     if (mc) {
                         Mesh* m = mc->getMesh();
@@ -113,7 +102,6 @@ void InspectorScreen::drawUI(float)
                         ImGui::Text("  Texture: %s", tex ? "present" : "none");
                     }
                 } else if (c->getType() == AComponent::Physics) {
-                    // Could be PhysicsComponent or BoxColliderComponent (both use Physics type)
                     PhysicsComponent* pc = dynamic_cast<PhysicsComponent*>(c);
                     if (pc) {
                         auto rb = pc->getRigidBody();
@@ -128,13 +116,10 @@ void InspectorScreen::drawUI(float)
                         std::string dynLabel = std::string("Dynamic##physics") + std::to_string(uid);
                         if (ImGui::Checkbox(dynLabel.c_str(), &dynamicCheckbox)) {
                             if (dynamicCheckbox) {
-                                // Switching to dynamic: pick sensible default mass if previously zero
                                 float newMass = (currentMass <= 0.0f) ? 1.0f : currentMass;
                                 pc->setMass(newMass);
-                                // Ensure body transform matches owner immediately
                                 pc->syncOwnerToBody();
                             } else {
-                                // Switching to static (collider only)
                                 pc->setMass(0.0f);
                                 if (pc->getRigidBody()) {
                                     pc->getRigidBody()->setLinearVelocity(reactphysics3d::Vector3(0.0f, 0.0f, 0.0f));
@@ -142,7 +127,6 @@ void InspectorScreen::drawUI(float)
                                 }
                             }
                         }
-                        // If dynamic, allow editing mass
                         if (dynamicCheckbox) {
                             float massVal = pc->getMass();
                             std::string massLabel = std::string("Mass##physics") + std::to_string(uid);
@@ -151,7 +135,6 @@ void InspectorScreen::drawUI(float)
                                 pc->setMass(massVal);
                             }
                         }
-                        // --- end new UI ---
                     }
                     BoxColliderComponent* bc = dynamic_cast<BoxColliderComponent*>(c);
                     if (bc) {
@@ -168,7 +151,6 @@ void InspectorScreen::drawUI(float)
         }
     }
 
-    // Allow adding components via UI
     ImGui::Separator();
     ImGui::Text("Add Component:");
     if (ent->object) {
@@ -180,7 +162,6 @@ void InspectorScreen::drawUI(float)
         }
         ImGui::SameLine();
         if (ImGui::Button("Add Box Collider")) {
-            // Choose a reasonable default half extents based on object scale
             Vector3D defaultExt(0.5f * ent->scale.m_x, 0.5f * ent->scale.m_y, 0.5f * ent->scale.m_z);
             BoxColliderComponent* bc = new BoxColliderComponent("BoxCollider", defaultExt, ent->object);
             if (bc) ent->object->attachComponent(bc);
@@ -193,7 +174,6 @@ void InspectorScreen::drawUI(float)
         ImGui::Unindent();
     }
 
-    // If there is no MeshComponent, still show which procedural mesh the object uses
     if (ent->object) {
         auto mcExisting = ent->object->findComponentOfType(AComponent::MeshComp);
         if (!mcExisting) {

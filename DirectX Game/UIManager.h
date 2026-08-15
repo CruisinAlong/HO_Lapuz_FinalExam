@@ -11,7 +11,6 @@ public:
     UIManager(AppWindow* app);
     ~UIManager();
 
-    // Draw all registered UIs (called every frame after scene render)
     void drawUI(float deltaTime);
 
     void setShowCredits(bool show) { m_show_credits = show; }

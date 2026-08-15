@@ -2,7 +2,6 @@
 #include "CorePrereqs.h"
 #include "GameObject.h"
 
-// Lightweight entity container separate from AppWindow; stores simple instance data
 class EntityManager {
 public:
     struct Entity {
@@ -24,7 +23,6 @@ public:
     void removeEntity(size_t index);
     void removeAllEntities();
 
-    // iterate pending updates (placeholder)
     void processPendingRemovals();
 
 private:

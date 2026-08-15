@@ -26,7 +26,6 @@ PlaneColliderComponent::PlaneColliderComponent(const std::string& name, GameObje
         }
         if (comp && comp->getRigidBody()) {
             Vector3D sc = getOwner()->getScale();
-            // Create a thin box to approximate a plane using half-extents
             reactphysics3d::Vector3 halfExtents(sc.m_x * 0.5f, 0.01f, sc.m_z * 0.5f);
             m_boxShape = pc->createBoxShape(halfExtents);
             if (m_boxShape) {
@@ -60,5 +59,4 @@ PlaneColliderComponent::~PlaneColliderComponent()
 }
 
 void PlaneColliderComponent::perform(float /*deltaTime*/) {
-    // No per-frame behaviour
 }

@@ -12,7 +12,6 @@ VertexShader::VertexShader(RenderSystem* system) : m_vs(nullptr), m_system(syste
 VertexShader::VertexShader(RenderSystem* system, const void* shader_byte_code, size_t byte_code_size)
     : m_vs(nullptr), m_system(system)
 {
-    // attempt to initialize; throw on failure
     if (!init(shader_byte_code, byte_code_size)) {
         char buf[256];
         sprintf_s(buf, "VertexShader ctor: init failed (bytecode=%p size=%zu)", shader_byte_code, byte_code_size);
@@ -48,7 +47,6 @@ bool VertexShader::init(const void* shader_byte_code, size_t byte_code_size)
     if (!SUCCEEDED(device->CreateVertexShader(
             shader_byte_code, byte_code_size, nullptr, &m_vs)))
         return false;
-    // register shader object in reference manager
     ReferenceManager::acquire(m_vs);
     return true;
 }

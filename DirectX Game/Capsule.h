@@ -21,7 +21,6 @@ public:
     void render() override;
     void destroy() override;
 
-    // Instancing & shared-resource helpers
     static bool InitSharedResources(class RenderSystem* rs, int segments = 16, int rings = 16);
     static void ReleaseSharedResources();
     static bool InitInstanceBuffer(class RenderSystem* rs, unsigned int maxInstances);

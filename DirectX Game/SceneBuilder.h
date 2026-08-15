@@ -13,7 +13,6 @@ public:
     SceneBuilder() {}
     ~SceneBuilder() {}
 
-    // Create basic cube (non-physics). If tex provided, attach MeshComponent with texture.
     ObjectInstance createCube(const Vector3D& pos = Vector3D(0.0f,0.0f,0.0f),
                               const Vector3D& rot = Vector3D(0.0f,0.0f,0.0f),
                               const Vector3D& scale = Vector3D(1.0f,1.0f,1.0f),
@@ -37,9 +36,7 @@ public:
 
     ObjectInstance createPhysicsPlane(const Vector3D& pos = Vector3D(0.0f,-1.5f,0.0f), const Vector3D& scale = Vector3D(10.0f,0.1f,10.0f));
 
-    // Convenience helpers that perform creation and push the resulting ObjectInstance
-    // into the provided container. These let callers delegate spawn responsibilities
-    // to SceneBuilder so AppWindow remains small.
+
     int addCubeTo(std::vector<ObjectInstance>& out, TexturePtr boxTexture = TexturePtr());
     int addPhysicsCubeTo(std::vector<ObjectInstance>& out, float mass = 1.0f, TexturePtr boxTexture = TexturePtr());
     int addTexturedCubeTo(std::vector<ObjectInstance>& out, TexturePtr tex);

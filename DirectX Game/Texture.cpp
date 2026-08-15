@@ -3,7 +3,6 @@
 #include "RenderSystem.h"
 #include <stdexcept>
 
-// DirectXTex
 #include <DirectXTex.h>
 using namespace DirectX;
 
@@ -26,13 +25,11 @@ Texture::Texture(const std::wstring& path) : Resource(path), m_srv(nullptr), m_t
     const Image* img = image.GetImage(0,0,0);
     if (!img) throw std::runtime_error("Invalid image data");
 
-    // Create texture resource from image
     hr = CreateTexture(device, image.GetImages(), image.GetImageCount(), image.GetMetadata(), &m_texture);
     if (FAILED(hr) || !m_texture) {
         throw std::runtime_error("Failed to create D3D11 texture from image");
     }
 
-    // Create SRV
     ID3D11Resource* res = m_texture;
     hr = device->CreateShaderResourceView(res, nullptr, &m_srv);
     if (FAILED(hr) || !m_srv) {
@@ -40,7 +37,6 @@ Texture::Texture(const std::wstring& path) : Resource(path), m_srv(nullptr), m_t
         throw std::runtime_error("Failed to create SRV for texture");
     }
 
-    // Fill width/height from metadata if available
     TexMetadata md = image.GetMetadata();
     m_width = static_cast<int>(md.width);
     m_height = static_cast<int>(md.height);

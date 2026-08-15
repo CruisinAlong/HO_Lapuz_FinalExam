@@ -13,7 +13,6 @@ SwapChain::SwapChain(RenderSystem* system) : m_swap_chain(nullptr), m_rtv(nullpt
 
 SwapChain::SwapChain(RenderSystem* system, HWND hwnd, UINT width, UINT height) : m_swap_chain(nullptr), m_rtv(nullptr), m_depthStencilTex(nullptr), m_dsv(nullptr), m_system(system)
 {
-    // Attempt to initialize; throw on failure to ensure RAII
     if (!init(hwnd, width, height)) {
         char buf[256];
         sprintf_s(buf, "SwapChain ctor: init failed for hwnd=%p (%u x %u)", hwnd, width, height);
@@ -23,7 +22,6 @@ SwapChain::SwapChain(RenderSystem* system, HWND hwnd, UINT width, UINT height) :
 
 SwapChain::~SwapChain()
 {
-    // Ensure resources are released
     release();
 }
 
@@ -64,7 +62,6 @@ bool SwapChain::init(HWND hwnd, UINT width, UINT height)
         return false;
     }
 
-    // register swap chain object in reference manager
     ReferenceManager::acquire(m_swap_chain);
 
     ID3D11Texture2D* buffer = nullptr;

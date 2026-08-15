@@ -15,7 +15,6 @@ private:
 
 
 public:
-    // Controlled creation/release to manage initialization order and RAII
 	static void create();
 	static void destroy();
 	static InputSystem* get();

@@ -14,10 +14,8 @@ public:
 
     void setNormal(float x, float y, float z) { (void)x; (void)y; (void)z; }
 
-    // plane is static, no physics update required
     void update(float dt) override { Plane::update(dt); (void)dt; }
 
-    // Register/unregister helpers
     static const std::vector<PhysicsPlane*>& getAllPlanes() { return s_planes; }
 
 private:

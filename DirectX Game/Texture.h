@@ -16,7 +16,6 @@ public:
     int getHeight() const { return m_height; }
 
 private:
-    // Direct3D objects
     ID3D11ShaderResourceView* m_srv;
     ID3D11Resource* m_texture;
     int m_width;

@@ -127,7 +127,6 @@ void Sphere::update(float dt)
 
     m_cb->update(GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext().get(), &cb);
 
-	// Debug: log world translation and that we updated the constant buffer
 	Matrix4x4 world = this->getWorldMatrix();
 	Vector3D tr = world.getTranslation();
 	LOG_DEBUG("Sphere::update: world=(%.3f,%.3f,%.3f) time=%.3f cb=%p", tr.m_x, tr.m_y, tr.m_z, m_time, (void*)m_cb);
@@ -146,10 +145,8 @@ void Sphere::render()
         return;
     }
 
-    // Ensure no cached bindings bleed from previous draws
     ctx->resetStateBindings();
 
-	// Debug: log render call and resource pointers
 	Matrix4x4 world = this->getWorldMatrix();
 	Vector3D tr = world.getTranslation();
 	LOG_DEBUG("Sphere::render: world=(%.3f,%.3f,%.3f) vb=%p ib=%p vs=%p ps=%p cb=%p",
@@ -160,7 +157,6 @@ void Sphere::render()
     ctx->setVertexBuffer(m_vb);
     ctx->setIndexBuffer(m_ib);
 
-	// Bind per-instance constant buffer for both VS and PS before drawing
 	if (m_cb) {
 		ctx->setConstantBuffer(m_vs, m_cb);
 		ctx->setConstantBuffer(m_ps, m_cb);
@@ -188,9 +184,7 @@ void Sphere::setProjection(const Matrix4x4& p)
 	m_projection = p;
 }
 
-// ----------------------
-// Shared resources & instancing for Sphere
-// ----------------------
+
 static VertexBuffer* s_sphere_vb = nullptr;
 static IndexBuffer*  s_sphere_ib = nullptr;
 static VertexShader* s_sphere_vs = nullptr;
@@ -214,13 +208,11 @@ bool Sphere::InitSharedResources(RenderSystem* rs, int segments, int rings)
     s_sphere_ps = proto.m_ps; proto.m_ps = nullptr;
     if (proto.m_cb) { proto.m_cb->release(); delete proto.m_cb; proto.m_cb = nullptr; }
 
-	// Compile instanced vertex shader variant and create input layout for instancing
 	void* vs_blob_inst = nullptr; size_t vs_size_inst = 0;
 	if (rs->compileVertexShader(L"VertexShader.hlsl", "vsmain_instanced", &vs_blob_inst, &vs_size_inst)) {
 		D3D11_INPUT_ELEMENT_DESC layoutInst[] = {
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			// instance matrix rows -> use TEXCOORD1..4 as semantic indices 1..4
 			{ "TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0,  D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 			{ "TEXCOORD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 			{ "TEXCOORD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
@@ -234,7 +226,6 @@ bool Sphere::InitSharedResources(RenderSystem* rs, int segments, int rings)
 				s_sphere_instancedLayout = nullptr;
 			}
 		}
-		// create a VertexShader object for the instanced vertex shader
 		s_sphere_vs_instanced = rs->createVertexShader(vs_blob_inst, vs_size_inst);
 		rs->releaseCompiledShader();
 	}
@@ -289,12 +280,10 @@ void Sphere::RenderInstanced(DeviceContext* ctx, UINT instanceCount)
     if (!s_sphere_vb || !s_sphere_ib) return;
 
     if (s_sphere_vs) ctx->setVertexShader(s_sphere_vs);
-    // Use instanced VS when rendering instanced batches
 	if (s_sphere_vs_instanced) ctx->setVertexShader(s_sphere_vs_instanced);
 	else if (s_sphere_vs) ctx->setVertexShader(s_sphere_vs);
 	if (s_sphere_ps) ctx->setPixelShader(s_sphere_ps);
     ctx->setVertexBuffer(s_sphere_vb);
-    // Override the input layout to the instanced layout so the instance buffer semantics are used
 	if (s_sphere_instancedLayout) ctx->setInputLayout(s_sphere_instancedLayout);
     ctx->setIndexBuffer(s_sphere_ib);
 

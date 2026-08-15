@@ -11,6 +11,10 @@ struct VS_INPUT
 {
     float3 position : POSITION;
     float2 texcoord : TEXCOORD;
+    float4 instanceRow0 : INSTANCE0;
+    float4 instanceRow1 : INSTANCE1;
+    float4 instanceRow2 : INSTANCE2;
+    float4 instanceRow3 : INSTANCE3;
 };
 
 struct VS_OUTPUT
@@ -23,33 +27,14 @@ VS_OUTPUT vsmain(VS_INPUT input)
 {
     VS_OUTPUT output;
     float4 pos = float4(input.position, 1.0f);
-    float4 worldPos = mul(pos, world);
-    float4 viewPos = mul(worldPos, view);
-    output.position = mul(viewPos, projection);
-    output.texcoord = input.texcoord;
-    return output;
-}
 
-struct VS_INPUT_INST
-{
-    float3 position : POSITION;
-    float2 texcoord : TEXCOORD;
-    float4 instanceRow0 : TEXCOORD1;
-    float4 instanceRow1 : TEXCOORD2;
-    float4 instanceRow2 : TEXCOORD3;
-    float4 instanceRow3 : TEXCOORD4;
-};
-
-VS_OUTPUT vsmain_instanced(VS_INPUT_INST input)
-{
-    VS_OUTPUT output;
-    float4 pos = float4(input.position, 1.0f);
     float4x4 instanceWorld = float4x4(
         input.instanceRow0,
         input.instanceRow1,
         input.instanceRow2,
         input.instanceRow3
     );
+
     float4 worldPos = mul(pos, instanceWorld);
     float4 viewPos = mul(worldPos, view);
     output.position = mul(viewPos, projection);

@@ -16,7 +16,6 @@ public:
     void setIndexBuffer(IndexBuffer* index_buffer);
     void setInstanceBuffer(ID3D11Buffer* instanceBuffer, UINT stride);
     void setInputLayout(ID3D11InputLayout* layout);
-    // Draw non-indexed instanced
     void drawInstanced(UINT vertex_count, UINT instance_count, UINT start_vertex_location);
     void drawIndexedInstanced(UINT index_count, UINT instance_count, UINT start_vertex_location, UINT start_index_location);
     void clearRenderTargetColor(SwapChain* swap_chain,float red, float green, float blue, float alpha);

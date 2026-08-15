@@ -28,8 +28,7 @@ void CreditsScreen::releaseImage()
 
 bool CreditsScreen::loadImage()
 {
-    if (m_srv) return true; // already loaded
-    // Image path relative to executable/repo
+    if (m_srv) return true; 
     const wchar_t* file = L"Images\\DLSU.png";
 
     GraphicsEngine* ge = GraphicsEngine::getInstance();
@@ -62,7 +61,6 @@ bool CreditsScreen::loadImage()
     if (FAILED(hr)) return false;
 
     std::unique_ptr<BYTE[]> pixels(new BYTE[w * h * 4]);
-    // CopyPixels parameters: stride and buffer size
     hr = converter->CopyPixels(nullptr, w * 4, w * h * 4, pixels.get());
     if (FAILED(hr)) return false;
 

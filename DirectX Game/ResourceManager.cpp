@@ -1,6 +1,5 @@
 #include "ResourceManager.h"
 
-// Use Win32 API to compute absolute path (portable for this project/toolset)
 ResourceManager::ResourceManager()
 {
 }
@@ -23,7 +22,6 @@ Resource* ResourceManager::createResourceFromFile(const std::wstring& file_path)
         return it->second.get();
     }
 
-    // Not found: create concrete resource
     Resource* raw = createResourceFromFileConcrete(key);
     if (!raw) return nullptr;
 

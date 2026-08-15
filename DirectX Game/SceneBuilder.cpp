@@ -14,7 +14,6 @@
 #include "ShaderLibrary.h"
 #include "Debug.h"
 
-// createCube
 ObjectInstance SceneBuilder::createCube(const Vector3D& pos, const Vector3D& rot, const Vector3D& scale, TexturePtr tex)
 {
     ObjectInstance out;
@@ -36,14 +35,12 @@ ObjectInstance SceneBuilder::createCube(const Vector3D& pos, const Vector3D& rot
     return out;
 }
 
-// createSphere
 ObjectInstance SceneBuilder::createSphere(float radius, const Vector3D& pos)
 {
     ObjectInstance out;
     LOG_DEBUG("SceneBuilder: createSphere() - requested radius=%.3f pos=(%.3f,%.3f,%.3f)",
               radius, pos.m_x, pos.m_y, pos.m_z);
 
-    // Ensure shared GPU resources and instance buffer for Sphere are initialized
     auto ge = GraphicsEngine::getInstance();
     if (ge) {
         auto rs = ge->getRenderSystem();
@@ -67,12 +64,9 @@ ObjectInstance SceneBuilder::createSphere(float radius, const Vector3D& pos)
     s->setPosition(pos);
     s->setRotation(Vector3D(0.0f,0.0f,0.0f));
 
-    // Attach a MeshComponent so the Sphere is visible when spawned. No collider/physics
-    // is added here; colliders may be created/attached later via editor or code.
     MeshComponent* smc = new MeshComponent("MeshComp", nullptr, TexturePtr(), s);
     if (smc) s->attachComponent(smc);
 
-    // Log world translation & scale (diagnostic for transform errors)
     Matrix4x4 world = s->getWorldMatrix();
     Vector3D tr = world.getTranslation();
     Vector3D sc = s->getScale();
@@ -86,7 +80,6 @@ ObjectInstance SceneBuilder::createSphere(float radius, const Vector3D& pos)
     return out;
 }
 
-// createTexturedCube
 ObjectInstance SceneBuilder::createTexturedCube(TexturePtr tex, const Vector3D& pos, const Vector3D& rot, const Vector3D& scale)
 {
     return createCube(pos, rot, scale, tex);
@@ -100,7 +93,6 @@ int SceneBuilder::addSphereTo(std::vector<ObjectInstance>& out, float radius)
     return static_cast<int>(out.size() - 1);
 }
 
-// createPhysicsCube
 ObjectInstance SceneBuilder::createPhysicsCube(float mass, const Vector3D& pos, const Vector3D& rot, const Vector3D& scale, TexturePtr tex)
 {
     ObjectInstance out;
@@ -138,7 +130,6 @@ ObjectInstance SceneBuilder::createPhysicsCube(float mass, const Vector3D& pos, 
     return out;
 }
 
-// createMeshInstanceFrom
 ObjectInstance SceneBuilder::createMeshInstanceFrom(MeshPtr mesh, const Vector3D& pos, const Vector3D& scale)
 {
     ObjectInstance out;
@@ -174,12 +165,10 @@ ObjectInstance SceneBuilder::createMeshInstanceFrom(MeshPtr mesh, const Vector3D
     return out;
 }
 
-// createCapsule
 ObjectInstance SceneBuilder::createCapsule(float height, const Vector3D& pos)
 {
     ObjectInstance out;
     LOG_DEBUG("SceneBuilder: createCapsule() - requested height=%.3f pos=(%.3f,%.3f,%.3f)", height, pos.m_x, pos.m_y, pos.m_z);
-    // Ensure shared GPU resources for Capsule are initialized (if a render system is available)
     {
         auto ge = GraphicsEngine::getInstance();
         if (ge) {
@@ -205,12 +194,9 @@ ObjectInstance SceneBuilder::createCapsule(float height, const Vector3D& pos)
     cap->setPosition(pos);
     cap->setRotation(Vector3D(0.0f,0.0f,0.0f));
 
-    // Attach a MeshComponent so the Capsule is visible when spawned. Colliders are
-    // intentionally not attached here; they can be added later if desired.
     MeshComponent* cmc = new MeshComponent("MeshComp", nullptr, TexturePtr(), cap);
     if (cmc) cap->attachComponent(cmc);
 
-    // Log world translation & scale (diagnostic for transform errors)
     Matrix4x4 world = cap->getWorldMatrix();
     Vector3D tr = world.getTranslation();
     Vector3D sc = cap->getScale();
@@ -224,12 +210,10 @@ ObjectInstance SceneBuilder::createCapsule(float height, const Vector3D& pos)
     return out;
 }
 
-// createPhysicsPlane
 ObjectInstance SceneBuilder::createPhysicsPlane(const Vector3D& pos, const Vector3D& scale)
 {
     ObjectInstance out;
     LOG_DEBUG("SceneBuilder: createPhysicsPlane() - requested pos=(%.3f,%.3f,%.3f) scale=(%.3f,%.3f,%.3f)", pos.m_x, pos.m_y, pos.m_z, scale.m_x, scale.m_y, scale.m_z);
-    // Ensure shared GPU resources for Plane are initialized (if a render system is available)
     {
         auto ge = GraphicsEngine::getInstance();
         if (ge) {
@@ -261,7 +245,6 @@ ObjectInstance SceneBuilder::createPhysicsPlane(const Vector3D& pos, const Vecto
         p->attachComponent(pc);
     }
 
-    // Log world translation & scale (diagnostic for transform errors)
     Matrix4x4 world = p->getWorldMatrix();
     Vector3D tr = world.getTranslation();
     Vector3D sc = p->getScale();
@@ -281,7 +264,6 @@ int SceneBuilder::addCubeTo(std::vector<ObjectInstance>& out, TexturePtr boxText
     if (!ci.object) return -1;
     out.push_back(ci);
     int idx = static_cast<int>(out.size() - 1);
-    // Ensure physics component exists
     auto comps = ci.object->getComponentsOfType(AComponent::Physics);
     if (comps.empty()) {
         PhysicsComponent* pc = new PhysicsComponent("PhysicsCube", 1.0f, ci.object);
@@ -334,7 +316,6 @@ int SceneBuilder::addPhysicsPlaneTo(std::vector<ObjectInstance>& out, const Vect
     if (!ci.object) return -1;
     out.push_back(ci);
     int idx = static_cast<int>(out.size() - 1);
-    // Mark rigid body static if present
     auto comps = ci.object->getComponentsOfType(AComponent::Physics);
     for (auto c : comps) {
         if (!c) continue;

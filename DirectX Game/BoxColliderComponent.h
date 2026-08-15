@@ -13,7 +13,6 @@ public:
 
     void perform(float deltaTime) override;
 
-    // Accessors
     reactphysics3d::Collider* getCollider() const { return m_collider; }
     reactphysics3d::BoxShape* getShape() const { return m_boxShape; }
 

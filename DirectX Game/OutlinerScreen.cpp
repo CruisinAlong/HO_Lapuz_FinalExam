@@ -11,14 +11,12 @@ void OutlinerScreen::drawUI(float)
     ImGui::SetNextWindowPos(ImVec2(0, TOOLBAR_HEIGHT), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(220, io.DisplaySize.y - TOOLBAR_HEIGHT), ImGuiCond_FirstUseEver);
     ImGui::Begin("World Outliner", nullptr, ImGuiWindowFlags_NoCollapse);
-    // List entities from AppWindow
     if (m_app) {
         size_t count = m_app->getEntityCount();
         for (size_t i = 0; i < count; ++i)
         {
             char buf[128];
             snprintf(buf, sizeof(buf), "Object %zu", i);
-            // Visibility checkbox per-entity (allows multiple visible at once)
             auto ent = m_app->getEntity(i);
             if (ent) {
                 char visLabel[64];

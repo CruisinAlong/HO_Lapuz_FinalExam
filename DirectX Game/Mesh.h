@@ -19,7 +19,6 @@ class Mesh : public Resource
 {
 public:
     Mesh(const std::wstring& full_path);
-    // Construct a mesh from raw vertex/index data (procedural)
     Mesh(const std::vector<VertexMesh>& verts, const std::vector<unsigned int>& indices);
     ~Mesh();
 
