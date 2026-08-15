@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "objects": [
+    {"type":"Plane","position":[0,-1.5,0],"rotation":[0,0,0],"scale":[30,0.100000001,30],"components":[{"type":"Physics","props":{"mass":0.000000}}]},
+    {"type":"Cube","position":[5,2,0],"rotation":[0,0,0],"scale":[0.300000012,5,10],"components":[{"type":"MeshComponent","props":{"hasMesh":1}},{"type":"Physics","props":{"mass":1.000000}}]},
+    {"type":"Cube","position":[-5,2,0],"rotation":[0,0,0],"scale":[0.300000012,5,10],"components":[{"type":"MeshComponent","props":{"hasMesh":1}},{"type":"Physics","props":{"mass":1.000000}}]},
+    {"type":"Cube","position":[0,2,5],"rotation":[0,0,0],"scale":[10,5,0.300000012],"components":[{"type":"MeshComponent","props":{"hasMesh":1}},{"type":"Physics","props":{"mass":1.000000}}]},
+    {"type":"Cube","position":[0,1,-5],"rotation":[0,0,0],"scale":[10,3,0.300000012],"components":[{"type":"MeshComponent","props":{"hasMesh":1}},{"type":"Physics","props":{"mass":1.000000}}]},
+    {"type":"Capsule","position":[0,0,0],"rotation":[0,0,0],"scale":[1,1,1],"components":[{"type":"MeshComponent","props":{"hasMesh":1}}]}
+  ]
+}

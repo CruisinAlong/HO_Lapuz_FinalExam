@@ -1,0 +1,51 @@
+# Visual Studio / VSCode common
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Bb]uild/
+[Bb]in/
+[Oo]bj/
+Debug/
+Release/
+x64/
+x86/
+ipch/
+*.ilk
+*.log
+*.obj
+*.o
+*.pch
+*.pdb
+*.idb
+*.sbr
+*.tlb
+*.lib
+*.exe
+
+# Visual Studio database / caches
+*.VC.db
+*.VC.opendb
+*.sdf
+
+# Generated shader/compiled blobs (optional - keep if you prefer to track)
+*.cso
+*.blob
+
+# NuGet
+packages/
+*.nupkg
+# Rider
+.idea/
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Secrets / local settings
+*.env
