@@ -8,22 +8,19 @@ using JsonConvert = Newtonsoft.Json.JsonConvert;
 
 public class LevelImporter
 {
-    // Toggle this if your exporter writes rotation in radians
+
     private static bool rotationIsRadians = true;
 
-    // Simple mapping: level type -> prefab path in Resources (or null to use primitives)
-    // Extend this dictionary to point to project prefabs (place prefabs under Resources or adjust loader).
+
     private static readonly Dictionary<string, string> prefabMap = new Dictionary<string, string>()
     {
-        { "cube", null },    // null = use built-in PrimitiveType.Cube
+        { "cube", null },   
         { "plane", null },
         { "sphere", null },
         { "capsule", null },
-        // Example mapping to a prefab in Resources folder:
-        // { "MyCustomActor", "Prefabs/MyCustomActorPrefab" }
+
     };
 
-    // JSON models
     class Level { public int version; public List<SerializedObject> objects; }
     class SerializedObject
     {
@@ -36,7 +33,7 @@ public class LevelImporter
     class ComponentRecord
     {
         public string type;
-        public JObject props; // use JToken/JObject for robust parsing
+        public JObject props; 
     }
 
     [MenuItem("Tools/Import Level...")]
@@ -80,14 +77,17 @@ public class LevelImporter
             string typeKey = (o.type ?? "Cube").ToLowerInvariant();
             GameObject go = null;
 
-            // Try prefab mapping first
+            if (typeKey == "plane")
+            {
+                scl /= 10f;
+            }
+
             if (prefabMap.TryGetValue(typeKey, out string prefabPath) && !string.IsNullOrEmpty(prefabPath))
             {
                 var prefab = Resources.Load<GameObject>(prefabPath);
                 if (prefab != null) go = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
             }
 
-            // Fallback to primitives when no prefab
             if (go == null)
             {
                 switch (typeKey)

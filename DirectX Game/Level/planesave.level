@@ -1,6 +1,0 @@
-{
-  "version": 2,
-  "objects": [
-    {"type":"Plane","position":[0,-1.5,0],"rotation":[0,0,0],"scale":[10,0.100000001,10],"components":[{"type":"Physics","props":{"mass":0.000000}}]}
-  ]
-}
